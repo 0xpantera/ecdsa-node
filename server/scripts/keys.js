@@ -1,6 +1,30 @@
-const { toHex } = require("ethereum-cryptography/utils");
+const { toHex, utf8ToBytes } = require("ethereum-cryptography/utils");
 const secp = require("ethereum-cryptography/secp256k1");
 const { keccak256 } = require("ethereum-cryptography/keccak");
+
+function recoverKey(message, signature, recoveryBit) {
+    msgHash = hashMessage(message);
+    pk = secp.recoverPublicKey(msgHash, signature, recoveryBit);
+    return pk
+};
+
+function signMessage(msg) {
+    hash = hashMessage(msg);
+    const [r, s] = secp.signSync(hash, PRIVATE_KEY, {recovered: true});
+    return [r, s]
+};
+
+function hashMessage(message) {
+    msgBytes = utf8ToBytes(message);
+    msgHash = keccak256(msgBytes);
+    return msgHash
+};
+
+const PRIVATE_KEY = "e8f0a9e204b65eabfda16af62029f9b3e6c7a6678f9a67f32d37d78664f0c3c7";
+const msg = "pascal";
+const [sig, recovery] = signMessage(msg);
+const recoverdPk = recoverKey(msg, sig, recovery);
+console.log('Recovered PK:', toHex(recoverdPk));
 
 const privateKey = secp.utils.randomPrivateKey();
 console.log('Private Key:', toHex(privateKey));
@@ -10,6 +34,9 @@ console.log('Public Key', toHex(publicKey));
 
 const ethAddress = keccak256(publicKey.slice(1)).slice(-20);
 console.log('Eth address', toHex(ethAddress));
+console.log('139242bbccbaf31966f5a39a8d78b7f6231e48bf'.length);
+
+
 
 /*
 Private Key: e8f0a9e204b65eabfda16af62029f9b3e6c7a6678f9a67f32d37d78664f0c3c7
