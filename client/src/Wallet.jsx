@@ -38,7 +38,7 @@ function Wallet({ privateKey, setPrivateKey, setAddress, balance, setBalance, })
       <h1>Your Wallet</h1>
 
       <label>
-        Wallet Address
+        Private Key
         <input placeholder="Insert a valid Private Key" value={privateKey} onChange={onChange}></input>
       </label>
 
